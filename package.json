@@ -21,12 +21,14 @@
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.3",
-    "@types/sequelize": "^4.28.20"
+    "@types/sequelize": "^4.28.20",
+    "sequelize-cli": "^6.6.5"
   },
   "dependencies": {
     "dotenv": "^18.0.5",
     "express": "^5.2.1",
     "multer": "^2.4.0",
-    "sequelize": "^6.37.8"
+    "sequelize": "^6.37.8",
+    "sqlite3": "^6.0.1"
   }
 }

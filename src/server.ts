@@ -2,8 +2,12 @@ import { config } from "dotenv";
 config();
 
 import app from "./app";
+import sequelize from "./db/config/database";
 
 const main = async () => {
+    console.log("Connecting to database");
+    sequelize.authenticate();
+    console.log("Connected to database");
     app.listen(process.env.PORT);
 };
 
