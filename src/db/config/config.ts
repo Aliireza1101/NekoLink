@@ -11,4 +11,8 @@ export = {
         storage: process.env.DB_HOST,
         logging: console.log,
     },
+    production: {
+        dialect: "sqlite",
+        storage: process.env.DB_HOST,
+    },
 };

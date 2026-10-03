@@ -22,7 +22,8 @@
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.3",
     "@types/sequelize": "^4.28.20",
-    "sequelize-cli": "^6.6.5"
+    "sequelize-cli": "^6.6.5",
+    "@types/multer": "^2.3.0"
   },
   "dependencies": {
     "dotenv": "^18.0.5",
