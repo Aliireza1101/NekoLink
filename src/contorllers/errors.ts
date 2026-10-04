@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import AppError from "../utils/appError";
 import { ValidationError } from "sequelize";
+import { MulterError } from "multer";
 
 const sendDevErr = async (err: AppError, res: Response) => {
     console.error(err);
@@ -13,8 +14,16 @@ const sendDevErr = async (err: AppError, res: Response) => {
 };
 
 const sendProdErr = async (err: AppError, res: Response) => {
-    if (err.isOperational || err instanceof ValidationError) {
+    if (
+        err.isOperational ||
+        err instanceof ValidationError ||
+        (err instanceof MulterError && err.code === "LIMIT_UNEXPECTED_FILE")
+    ) {
         // Safe to send error details
+        err.statusCode = `${err.statusCode}`.startsWith("5")
+            ? 400
+            : err.statusCode;
+
         res.status(err.statusCode).json({
             status: err.status,
             message: err.message,
