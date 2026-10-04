@@ -41,3 +41,12 @@ export const hostFile = async (req: Request, res: Response) => {
         link: `${req.protocol}://${req.host}/api/files/${newFile.id}`,
     });
 };
+
+export const getFile = async (req: Request<{ id: string }>, res: Response) => {
+    const file = await File.findOne({ where: { id: req.params.id } });
+    if (!file) {
+        throw new AppError("File not found", 404);
+    }
+
+    res.download(`uploads/tmp/${file.filename}`, file.originalName);
+};

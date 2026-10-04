@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { hostFile, uploadSingFile } from "../contorllers/files";
+import { getFile, hostFile, uploadSingFile } from "../contorllers/files";
 
 const router = Router();
 
 router.post("/", uploadSingFile, hostFile);
+router.get("/:id", getFile);
 
-export default router
+export default router;
