@@ -21,13 +21,13 @@ module.exports = {
                 unique: true,
                 allowNull: false,
             },
-            mim_type: {
+            mime_type: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            size: { type: Sequelize.INTEGER, allowNull: false },
+            size: { type: Sequelize.BIGINT, allowNull: false },
             created_at: {
-                type: Sequelize.NOW,
+                type: Sequelize.DATE,
                 allowNull: false,
             },
             updated_at: { type: Sequelize.DATE, allowNull: true },

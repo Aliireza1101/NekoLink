@@ -11,7 +11,7 @@ class File extends Model<InferAttributes<File>, InferCreationAttributes<File>> {
     declare id: CreationOptional<number>;
     declare originalName: string;
     declare filename: string;
-    declare mimType: string;
+    declare mimeType: string;
     declare size: number;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt?: CreationOptional<Date>;
@@ -31,13 +31,13 @@ File.init(
             allowNull: false,
         },
         filename: { type: DataTypes.STRING, unique: true, allowNull: false },
-        mimType: {
+        mimeType: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        size: { type: DataTypes.INTEGER, allowNull: false },
+        size: { type: DataTypes.BIGINT, allowNull: false },
         createdAt: {
-            type: DataTypes.NOW,
+            type: DataTypes.DATE,
             allowNull: false,
         },
         updatedAt: {
@@ -48,7 +48,7 @@ File.init(
     {
         sequelize: sequelize,
         modelName: "files",
-        timestamps: false,
+        timestamps: true,
         underscored: true,
     },
 );
