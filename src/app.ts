@@ -4,7 +4,7 @@ import filesRouter from "./routs/files";
 
 const app = express();
 
-app.use("/api/v1/files", filesRouter);
+app.use("/api/files", filesRouter);
 
 // Error handler
 app.use(globalErrorHandler);
