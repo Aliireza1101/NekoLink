@@ -21,9 +21,9 @@ const upload = multer({
     storage: diskStorage,
 });
 
-export const uploadSingFile = upload.single("myfile");
+export const multerUploader = upload.single("file");
 
-export const hostFile = async (req: Request, res: Response) => {
+export const uploadFile = async (req: Request, res: Response) => {
     if (!req.file) {
         throw new AppError("Please upload a file", 400);
     }

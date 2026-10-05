@@ -1,6 +1,6 @@
 import express from "express";
 import { globalErrorHandler } from "./contorllers/errors";
-import filesRouter from "./routs/files";
+import filesRouter from "./routes/files";
 
 const app = express();
 
