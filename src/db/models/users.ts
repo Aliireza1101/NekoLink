@@ -8,6 +8,7 @@ import {
     NonAttribute,
 } from "sequelize";
 import Plan from "./plans";
+import bcrypt from "bcrypt";
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     declare id: CreationOptional<number>;
@@ -36,15 +37,32 @@ User.init(
         firstName: {
             type: DataTypes.STRING,
             allowNull: false,
+            validate: {
+                len: {
+                    args: [3, 32],
+                    msg: "First name must be between 3 to 32 characters",
+                },
+            },
         },
         lastName: {
             type: DataTypes.STRING,
             allowNull: true,
+            validate: {
+                len: {
+                    args: [3, 32],
+                    msg: "Last name must be between 3 to 32 characters",
+                },
+            },
         },
         email: {
             type: DataTypes.STRING,
             allowNull: false,
             unique: true,
+            validate: {
+                isEmail: {
+                    msg: "Invalid Email",
+                },
+            },
         },
         planId: {
             type: DataTypes.INTEGER,
@@ -57,6 +75,12 @@ User.init(
         password: {
             type: DataTypes.STRING,
             allowNull: false,
+            validate: {
+                len: {
+                    args: [8, 32],
+                    msg: "Password must be at least 8 and characters long and shorter than 32 characters",
+                },
+            },
         },
         passwordChangedAt: {
             type: DataTypes.DATE,
@@ -84,6 +108,11 @@ User.init(
         modelName: "users",
         timestamps: true,
         underscored: true,
+        hooks: {
+            beforeCreate: async (user) => {
+                user.password = await bcrypt.hash(user.password, 12);
+            },
+        },
     },
 );
 
