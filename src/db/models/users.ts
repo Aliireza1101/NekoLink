@@ -23,6 +23,10 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     declare passwordTokenExpiresAt: CreationOptional<Date>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
+
+    async matchPassword(candidatePassword: string) {
+        return await bcrypt.compare(candidatePassword, this.password);
+    }
 }
 
 User.init(
