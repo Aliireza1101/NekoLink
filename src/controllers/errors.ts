@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import AppError from "../utils/appError";
-import { ValidationError } from "sequelize";
+import { UniqueConstraintError, ValidationError } from "sequelize";
 import { MulterError } from "multer";
 
 const sendDevErr = async (err: AppError, res: Response) => {
@@ -14,17 +14,16 @@ const sendDevErr = async (err: AppError, res: Response) => {
 };
 
 const sendProdErr = async (err: AppError, res: Response) => {
-    if (
-        err.isOperational ||
-        err instanceof ValidationError ||
-        (err instanceof MulterError && err.code === "LIMIT_UNEXPECTED_FILE")
-    ) {
-        // Safe to send error details
-        err.statusCode = `${err.statusCode}`.startsWith("5")
-            ? 400
-            : err.statusCode;
+    if (err instanceof UniqueConstraintError) {
+        return sendUniqueConstraintError(err, res);
+    } else if (err instanceof ValidationError) {
+        return sendValidationError(err, res);
+    } else if (err instanceof MulterError) {
+        return sendMulterError(err, res);
+    }
 
-        res.status(err.statusCode).json({
+    if (err.isOperational) {
+        return res.status(err.statusCode).json({
             status: err.status,
             message: err.message,
         });
@@ -35,6 +34,33 @@ const sendProdErr = async (err: AppError, res: Response) => {
             message: "something went wrong",
         });
     }
+};
+
+const sendValidationError = (err: ValidationError, res: Response) => {
+    res.status(400).json({
+        status: "error",
+        message: "Validation failed",
+        errors: err.errors.map((value) => {
+            return { field: value.path, message: value.message };
+        }),
+    });
+};
+
+const sendUniqueConstraintError = (
+    err: UniqueConstraintError,
+    res: Response,
+) => {
+    res.status(400).json({
+        status: "error",
+        message: `This ${err.errors[0]?.path} is already being used`,
+    });
+};
+
+const sendMulterError = (err: MulterError, res: Response) => {
+    res.status(400).json({
+        status: "error",
+        message: err.message,
+    });
 };
 
 export const globalErrorHandler = async (
