@@ -5,9 +5,10 @@ import {
     createPlan,
     deletePlan,
 } from "../controllers/plans";
+import { protect } from "../controllers/auth";
 
 const router = Router();
-router.route("/").get(getPlans).post(createPlan);
-router.route("/:id").get(getPlan).delete(deletePlan);
+router.route("/").get(getPlans).post(protect, createPlan);
+router.route("/:id").get(getPlan).delete(protect, deletePlan);
 
 export default router;

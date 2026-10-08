@@ -27,6 +27,12 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     async matchPassword(candidatePassword: string) {
         return await bcrypt.compare(candidatePassword, this.password);
     }
+
+    hasPasswordChanged(iat: number) {
+        if (!this.passwordChangedAt) return false;
+
+        return this.passwordChangedAt.getTime() / 1000 > iat;
+    }
 }
 
 User.init(

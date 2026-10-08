@@ -1,14 +1,64 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { User } from "../db/models";
 import jwt from "jsonwebtoken";
 import { type StringValue } from "ms";
 import AppError from "../utils/appError";
 
-const signToken = async (id: number) => {
-    // This is not async and might cause problems
-    return jwt.sign({ id }, process.env.JWT_SECRET_TOKEN as string, {
-        expiresIn: process.env.JWT_EXPIRES_IN as StringValue,
+const signToken = async (id: number): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        jwt.sign(
+            { id },
+            process.env.JWT_SECRET_KEY as string,
+            {
+                expiresIn: process.env.JWT_EXPIRES_IN as StringValue,
+            },
+            (err, token) => {
+                if (token) return resolve(token);
+                reject(err);
+            },
+        );
     });
+};
+
+const verifyToken = async (token: string): Promise<jwt.JwtPayload> => {
+    return new Promise((resolve, reject) => {
+        jwt.verify(
+            token,
+            process.env.JWT_SECRET_KEY as string,
+            {},
+            (err, decoded) => {
+                if (decoded && typeof decoded === "object")
+                    return resolve(decoded);
+                reject(err || new AppError("Invalid authorization token", 401));
+            },
+        );
+    });
+};
+
+export const protect = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+    const token =
+        req.cookies.jwt ||
+        (req.headers.authorization?.startsWith("Bearer ")
+            ? req.headers.authorization?.split(" ")[1]
+            : undefined);
+
+    if (!token) {
+        throw new AppError("Authorization required", 401);
+    }
+
+    const payload = await verifyToken(token);
+    const user = await User.unscoped().findByPk(Number(payload.id));
+
+    if (!user || user.hasPasswordChanged(payload.iat!)) {
+        throw new AppError("Invalid authorization token", 401);
+    }
+
+    req.user = user;
+    next();
 };
 
 export const signup = async (req: Request, res: Response) => {
@@ -55,7 +105,7 @@ export const login = async (req: Request, res: Response) => {
         maxAge: Number(process.env.JWT_COOKIE_MAX_AGE),
     });
 
-    res.status(201).json({
+    res.status(200).json({
         status: "success",
         token,
         me: {
