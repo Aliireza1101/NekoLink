@@ -3,6 +3,7 @@ import { User } from "../db/models";
 import jwt from "jsonwebtoken";
 import { type StringValue } from "ms";
 import AppError from "../utils/appError";
+import { sendForgotPasswordEmail } from "../emails/email";
 
 const signToken = async (id: number): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -114,4 +115,36 @@ export const login = async (req: Request, res: Response) => {
             email: user.email,
         },
     });
+};
+
+export const forgotPassword = async (req: Request, res: Response) => {
+    if (!req.body.email) {
+        throw new AppError("Please provide email", 400);
+    }
+    const user = await User.findOne({ where: { email: req.body.email } });
+
+    if (!user) {
+        throw new AppError("Invalid email", 400);
+    }
+
+    const passwordResetToken = user.generatePasswordResetToken();
+    await user.save({ hooks: false, validate: false });
+
+    const resetURL = `${req.protocol}://${req.get("host")}/api/auth/reset-password/${passwordResetToken}`;
+    try {
+        await sendForgotPasswordEmail(user.email, user.firstName, resetURL);
+        res.status(200).json({
+            status: "success",
+            message: "Token was sent to your email",
+        });
+    } catch (err) {
+        console.error(err);
+        user.passwordResetToken = undefined;
+        user.passwordTokenExpiresAt = undefined;
+        await user.save();
+        throw new AppError(
+            "Something went wrong during sending the email, please try again later!",
+            500,
+        );
+    }
 };

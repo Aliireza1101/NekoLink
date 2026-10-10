@@ -9,6 +9,7 @@ import {
 } from "sequelize";
 import Plan from "./plans";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     declare id: CreationOptional<number>;
@@ -19,8 +20,8 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     declare plan: NonAttribute<Plan>;
     declare password: string;
     declare passwordChangedAt: CreationOptional<Date>;
-    declare passwordResetToken: CreationOptional<string>;
-    declare passwordTokenExpiresAt: CreationOptional<Date>;
+    declare passwordResetToken: CreationOptional<string | undefined>;
+    declare passwordTokenExpiresAt: CreationOptional<Date | undefined>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
 
@@ -32,6 +33,16 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
         if (!this.passwordChangedAt) return false;
 
         return this.passwordChangedAt.getTime() / 1000 > iat;
+    }
+
+    generatePasswordResetToken() {
+        const token = crypto.randomBytes(32).toString("hex");
+        this.passwordResetToken = crypto.hash("sha256", token);
+
+        const expiresAt = new Date();
+        expiresAt.setMinutes(expiresAt.getMinutes() + 15);
+        this.passwordTokenExpiresAt = expiresAt;
+        return token;
     }
 }
 
