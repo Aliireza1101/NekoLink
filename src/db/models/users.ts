@@ -12,7 +12,7 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 
 const roles = ["USER", "ADMIN"] as const;
-type Role = (typeof roles)[number];
+export type Role = (typeof roles)[number];
 
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     declare id: CreationOptional<number>;

@@ -7,6 +7,7 @@ import { Op } from "sequelize";
 import { User } from "../db/models";
 import AppError from "../utils/appError";
 import { sendForgotPasswordEmail } from "../emails/email";
+import { Role } from "../db/models/users";
 
 const signToken = async (id: number, res: Response): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -92,6 +93,15 @@ export const signup = async (req: Request, res: Response) => {
             email: newUser.email,
         },
     });
+};
+
+export const restrictTo = (...roles: Role[]) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        if (!roles.includes(req.user.role)) {
+            throw new AppError("You don't have permission to this route", 403);
+        }
+        next();
+    };
 };
 
 export const login = async (req: Request, res: Response) => {
