@@ -29,7 +29,6 @@ export const deletePlan = async (
     req: Request<{ id: string }>,
     res: Response,
 ) => {
-    console.log(req.user);
     await Plan.destroy({ where: { id: req.params.id } });
     res.status(204).json();
 };

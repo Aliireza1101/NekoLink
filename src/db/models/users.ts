@@ -6,6 +6,7 @@ import {
     Model,
     CreationOptional,
     NonAttribute,
+    BelongsToGetAssociationMixin,
 } from "sequelize";
 import Plan from "./plans";
 import bcrypt from "bcrypt";
@@ -28,6 +29,8 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     declare passwordTokenExpiresAt: CreationOptional<Date | null>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
+
+    declare getPlan: BelongsToGetAssociationMixin<Plan>;
 
     async matchPassword(candidatePassword: string) {
         return await bcrypt.compare(candidatePassword, this.password);
@@ -163,7 +166,8 @@ User.init(
                     "password",
                     "passwordChangedAt",
                     "passwordResetToken",
-                    "passwordTokenExpires",
+                    "passwordTokenExpiresAt",
+                    "planId",
                 ],
             },
         },
