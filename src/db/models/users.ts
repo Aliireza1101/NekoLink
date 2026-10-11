@@ -11,11 +11,15 @@ import Plan from "./plans";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 
+const roles = ["USER", "ADMIN"] as const;
+type Role = (typeof roles)[number];
+
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     declare id: CreationOptional<number>;
     declare firstName: string;
     declare lastName: CreationOptional<string>;
     declare email: string;
+    declare role: CreationOptional<Role>;
     declare planId: CreationOptional<number>;
     declare plan: NonAttribute<Plan>;
     declare password: string;
@@ -84,6 +88,12 @@ User.init(
                     msg: "Invalid Email",
                 },
             },
+        },
+        role: {
+            type: DataTypes.ENUM(...roles),
+            allowNull: false,
+            defaultValue: "USER",
+            validate: { isIn: roles as readonly any[] },
         },
         planId: {
             type: DataTypes.INTEGER,
