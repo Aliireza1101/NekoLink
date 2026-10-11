@@ -20,8 +20,8 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     declare plan: NonAttribute<Plan>;
     declare password: string;
     declare passwordChangedAt: CreationOptional<Date>;
-    declare passwordResetToken: CreationOptional<string | undefined>;
-    declare passwordTokenExpiresAt: CreationOptional<Date | undefined>;
+    declare passwordResetToken: CreationOptional<string | null>;
+    declare passwordTokenExpiresAt: CreationOptional<Date | null>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
 
@@ -99,7 +99,7 @@ User.init(
             validate: {
                 len: {
                     args: [8, 32],
-                    msg: "Password must be at least 8 and characters long and shorter than 32 characters",
+                    msg: "Password must be at least 8 characters long and shorter than 32 characters",
                 },
             },
         },
@@ -130,8 +130,31 @@ User.init(
         timestamps: true,
         underscored: true,
         hooks: {
-            beforeCreate: async (user) => {
-                user.password = await bcrypt.hash(user.password, 12);
+            beforeUpdate(user) {
+                if (user.changed("password")) {
+                    const now = new Date();
+                    now.setMinutes(now.getMinutes() - 1);
+                    user.passwordChangedAt = now;
+                }
+            },
+            async beforeSave(user, options) {
+                if (user.isNewRecord || user.changed("password")) {
+                    user.password = await bcrypt.hash(user.password, 12);
+
+                    // Somehow ORM validates once before (beforeSave) hook and once after it?
+                    // What the actual fuck was going on
+                    options.validate = false; // off because it is has been validated before and it's gonna validate again after this hook
+                }
+            },
+        },
+        defaultScope: {
+            attributes: {
+                exclude: [
+                    "password",
+                    "passwordChangedAt",
+                    "passwordResetToken",
+                    "passwordTokenExpires",
+                ],
             },
         },
     },

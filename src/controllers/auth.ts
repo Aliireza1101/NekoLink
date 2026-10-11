@@ -1,11 +1,14 @@
 import { NextFunction, Request, Response } from "express";
-import { User } from "../db/models";
 import jwt from "jsonwebtoken";
 import { type StringValue } from "ms";
+import crypto from "crypto";
+
+import { Op } from "sequelize";
+import { User } from "../db/models";
 import AppError from "../utils/appError";
 import { sendForgotPasswordEmail } from "../emails/email";
 
-const signToken = async (id: number): Promise<string> => {
+const signToken = async (id: number, res: Response): Promise<string> => {
     return new Promise((resolve, reject) => {
         jwt.sign(
             { id },
@@ -14,7 +17,15 @@ const signToken = async (id: number): Promise<string> => {
                 expiresIn: process.env.JWT_EXPIRES_IN as StringValue,
             },
             (err, token) => {
-                if (token) return resolve(token);
+                if (token) {
+                    res.cookie("jwt", token, {
+                        httpOnly: true,
+                        secure: false, // for development environment
+                        sameSite: "lax",
+                        maxAge: Number(process.env.JWT_COOKIE_MAX_AGE),
+                    });
+                    return resolve(token);
+                }
                 reject(err);
             },
         );
@@ -70,13 +81,7 @@ export const signup = async (req: Request, res: Response) => {
         password: req.body.password,
     });
 
-    const token = await signToken(newUser.id);
-    res.cookie("jwt", token, {
-        httpOnly: true,
-        secure: false, // for development environment
-        sameSite: "lax",
-        maxAge: Number(process.env.JWT_COOKIE_MAX_AGE),
-    });
+    const token = await signToken(newUser.id, res);
 
     res.status(201).json({
         status: "success",
@@ -98,13 +103,7 @@ export const login = async (req: Request, res: Response) => {
         throw new AppError("Incorrect email or password", 401);
     }
 
-    const token = await signToken(user.id);
-    res.cookie("jwt", token, {
-        httpOnly: true,
-        secure: false, // for development environment
-        sameSite: "lax",
-        maxAge: Number(process.env.JWT_COOKIE_MAX_AGE),
-    });
+    const token = await signToken(user.id, res);
 
     res.status(200).json({
         status: "success",
@@ -139,12 +138,41 @@ export const forgotPassword = async (req: Request, res: Response) => {
         });
     } catch (err) {
         console.error(err);
-        user.passwordResetToken = undefined;
-        user.passwordTokenExpiresAt = undefined;
+        user.passwordResetToken = null;
+        user.passwordTokenExpiresAt = null;
         await user.save();
         throw new AppError(
             "Something went wrong during sending the email, please try again later!",
             500,
         );
     }
+};
+
+export const resetPassword = async (
+    req: Request<{ token: string }>,
+    res: Response,
+) => {
+    if (!req.params.token || !req.body.password) {
+        throw new AppError("Please provide both token and password", 400);
+    }
+
+    const hashedToken = crypto.hash("sha256", req.params.token);
+    const user = await User.findOne({
+        where: {
+            passwordResetToken: hashedToken,
+            passwordTokenExpiresAt: { [Op.gt]: new Date() },
+        },
+    });
+
+    if (!user) {
+        throw new AppError("Invalid or expired token", 404);
+    }
+
+    user.password = req.body.password;
+    user.passwordResetToken = null;
+    user.passwordTokenExpiresAt = null;
+    await user.save();
+
+    const token = await signToken(user.id, res);
+    res.status(200).json({ status: "success", token });
 };
