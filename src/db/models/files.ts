@@ -4,8 +4,10 @@ import {
     Model,
     CreationOptional,
     DataTypes,
+    NonAttribute,
 } from "sequelize";
 import sequelize from "../config/database";
+import DownloadLink from "./downloadLinks";
 
 class File extends Model<InferAttributes<File>, InferCreationAttributes<File>> {
     declare id: CreationOptional<number>;
@@ -13,6 +15,7 @@ class File extends Model<InferAttributes<File>, InferCreationAttributes<File>> {
     declare filename: string;
     declare mimeType: string;
     declare size: number;
+    declare downloadLinks: NonAttribute<DownloadLink[]>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt?: CreationOptional<Date>;
 }
