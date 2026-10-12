@@ -5,6 +5,7 @@ import {
     CreationOptional,
     DataTypes,
     NonAttribute,
+    HasManyCreateAssociationMixin,
 } from "sequelize";
 import sequelize from "../config/database";
 import DownloadLink from "./downloadLinks";
@@ -18,6 +19,8 @@ class File extends Model<InferAttributes<File>, InferCreationAttributes<File>> {
     declare downloadLinks: NonAttribute<DownloadLink[]>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt?: CreationOptional<Date>;
+
+    declare createDownloadLink: HasManyCreateAssociationMixin<DownloadLink>;
 }
 
 File.init(

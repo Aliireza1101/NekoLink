@@ -3,7 +3,7 @@ import multer from "multer";
 import AppError from "../utils/appError";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
-import { File } from "../db/models";
+import { DownloadLink, File } from "../db/models";
 
 const maxFileSize = Math.floor(Number(process.env.MAX_FILE_SIZE) * 2 ** 30);
 
@@ -35,18 +35,30 @@ export const uploadFile = async (req: Request, res: Response) => {
         size: req.file.size,
     });
 
+    const downloadLink = await newFile.createDownloadLink();
+
     res.status(200).json({
         status: "success",
         size: newFile.size,
-        link: `${req.protocol}://${req.host}/api/files/${newFile.id}`,
+        downloadLink: `${req.protocol}://${req.host}/api/files/${downloadLink.token}`,
+        downloadPage: null,
     });
 };
 
-export const getFile = async (req: Request<{ id: string }>, res: Response) => {
-    const file = await File.findOne({ where: { id: req.params.id } });
-    if (!file) {
-        throw new AppError("File not found", 404);
+export const getFile = async (
+    req: Request<{ token: string }>,
+    res: Response,
+) => {
+    const link = await DownloadLink.findOne({
+        where: { token: req.params.token },
+        include: [{ model: File, as: "file" }],
+    });
+    if (!link || !link.isActive) {
+        throw new AppError("Invalid download link", 404);
     }
 
-    res.download(`uploads/tmp/${file.filename}`, file.originalName);
+    link.downloadCount += 1;
+    await link.save();
+
+    res.download(`uploads/tmp/${link.file.filename}`, link.file.originalName);
 };
