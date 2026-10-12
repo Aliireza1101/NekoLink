@@ -40,7 +40,6 @@ export const uploadFile = async (req: Request, res: Response) => {
 
     res.status(200).json({
         status: "success",
-        file: newFile,
         downloadLink: `${link}/download`,
         detail: `${link}`,
     });
@@ -59,6 +58,11 @@ export const getFile = async (
     }
     res.status(200).json({
         status: "success",
+        file: {
+            name: link.file.originalName,
+            mimeType: link.file.mimeType,
+            size: link.file.size,
+        },
         downloadLink: `${req.protocol}://${req.host}/api/files/${link.token}/download`,
     });
 };
