@@ -36,16 +36,34 @@ export const uploadFile = async (req: Request, res: Response) => {
     });
 
     const downloadLink = await newFile.createDownloadLink();
+    const link = `${req.protocol}://${req.host}/api/files/${downloadLink.token}`;
 
     res.status(200).json({
         status: "success",
-        size: newFile.size,
-        downloadLink: `${req.protocol}://${req.host}/api/files/${downloadLink.token}`,
-        downloadPage: null,
+        file: newFile,
+        downloadLink: `${link}/download`,
+        detail: `${link}`,
     });
 };
 
 export const getFile = async (
+    req: Request<{ token: string }>,
+    res: Response,
+) => {
+    const link = await DownloadLink.findOne({
+        where: { token: req.params.token },
+        include: [{ model: File, as: "file" }],
+    });
+    if (!link || !link.isActive) {
+        throw new AppError("Invalid file", 404);
+    }
+    res.status(200).json({
+        status: "success",
+        downloadLink: `${req.protocol}://${req.host}/api/files/${link.token}/download`,
+    });
+};
+
+export const downloadFile = async (
     req: Request<{ token: string }>,
     res: Response,
 ) => {
