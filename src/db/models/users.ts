@@ -9,6 +9,7 @@ import {
     BelongsToGetAssociationMixin,
 } from "sequelize";
 import Plan from "./plans";
+import File from "./files";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 
@@ -29,6 +30,8 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     declare passwordTokenExpiresAt: CreationOptional<Date | null>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
+
+    declare files: NonAttribute<File[]>;
 
     declare getPlan: BelongsToGetAssociationMixin<Plan>;
 

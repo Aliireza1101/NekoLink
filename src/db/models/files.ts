@@ -8,7 +8,9 @@ import {
     HasManyCreateAssociationMixin,
 } from "sequelize";
 import sequelize from "../config/database";
+
 import DownloadLink from "./downloadLinks";
+import User from "./users";
 
 class File extends Model<InferAttributes<File>, InferCreationAttributes<File>> {
     declare id: CreationOptional<number>;
@@ -16,10 +18,12 @@ class File extends Model<InferAttributes<File>, InferCreationAttributes<File>> {
     declare filename: string;
     declare mimeType: string;
     declare size: number;
+    declare userId: CreationOptional<number>;
     declare downloadLinks: NonAttribute<DownloadLink[]>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt?: CreationOptional<Date>;
 
+    declare user: NonAttribute<User>;
     declare createDownloadLink: HasManyCreateAssociationMixin<DownloadLink>;
 }
 
@@ -42,6 +46,14 @@ File.init(
             allowNull: false,
         },
         size: { type: DataTypes.BIGINT, allowNull: false },
+        userId: {
+            type: DataTypes.INTEGER.UNSIGNED,
+            allowNull: true,
+            references: {
+                model: "users",
+                key: "id",
+            },
+        },
         createdAt: {
             type: DataTypes.DATE,
             allowNull: false,
