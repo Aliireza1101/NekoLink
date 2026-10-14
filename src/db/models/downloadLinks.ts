@@ -17,14 +17,18 @@ class DownloadLink extends Model<
 > {
     declare id: CreationOptional<number>;
     declare token: CreationOptional<string>;
-    declare isActive: CreationOptional<boolean>;
-    declare expiresAt: CreationOptional<Date>;
-    declare maxDownloads: CreationOptional<number>;
-    declare downloadCount: CreationOptional<number>;
+    declare isActive: CreationOptional<boolean | undefined>;
+    declare expiresAt: CreationOptional<Date | null | undefined>;
+    declare maxDownloads: CreationOptional<number | null | undefined>;
+    declare downloadCount: CreationOptional<number | null | undefined>;
     declare fileId: CreationOptional<number>;
     declare file: NonAttribute<File>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
+
+    generateToken() {
+        return crypto.randomBytes(5).toString("hex");
+    }
 }
 
 DownloadLink.init(
@@ -38,19 +42,32 @@ DownloadLink.init(
             type: DataTypes.STRING(64),
             allowNull: false,
             unique: true,
+            validate: {
+                notEmpty: true,
+                len: [1, 64],
+            },
         },
         expiresAt: {
             type: DataTypes.DATE,
             allowNull: true,
+            validate: {
+                isDate: true,
+            },
         },
         maxDownloads: {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: true,
+            validate: {
+                min: 1,
+            },
         },
         downloadCount: {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
             defaultValue: 0,
+            validate: {
+                min: 0,
+            },
         },
         isActive: {
             type: DataTypes.BOOLEAN,
@@ -81,7 +98,9 @@ DownloadLink.init(
         underscored: true,
         hooks: {
             beforeValidate(downloadLink) {
-                downloadLink.token = crypto.randomBytes(5).toString("hex");
+                if (!downloadLink.token) {
+                    downloadLink.token = downloadLink.generateToken();
+                }
             },
         },
     },
