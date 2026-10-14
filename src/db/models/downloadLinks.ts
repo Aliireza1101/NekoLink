@@ -20,7 +20,7 @@ class DownloadLink extends Model<
     declare isActive: CreationOptional<boolean | undefined>;
     declare expiresAt: CreationOptional<Date | null | undefined>;
     declare maxDownloads: CreationOptional<number | null | undefined>;
-    declare downloadCount: CreationOptional<number | null | undefined>;
+    declare downloadCount: CreationOptional<number>;
     declare fileId: CreationOptional<number>;
     declare file: NonAttribute<File>;
     declare createdAt: CreationOptional<Date>;
