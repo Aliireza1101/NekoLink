@@ -76,7 +76,7 @@ export const downloadFile = async (
         include: [{ model: File, as: "file" }],
     });
     if (!link || !link.isActive) {
-        throw new NotFound("Download Link");
+        throw new NotFound("File");
     }
 
     link.downloadCount += 1;
