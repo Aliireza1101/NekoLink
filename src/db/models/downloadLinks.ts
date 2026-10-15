@@ -10,6 +10,7 @@ import {
 import sequelize from "../config/database";
 
 import crypto from "node:crypto";
+import bcrypt from "bcrypt";
 import File from "./files";
 
 class DownloadLink extends Model<
@@ -22,10 +23,15 @@ class DownloadLink extends Model<
     declare expiresAt: CreationOptional<Date | null | undefined>;
     declare maxDownloads: CreationOptional<number | null | undefined>;
     declare downloadCount: CreationOptional<number>;
+    declare password: CreationOptional<string>;
     declare fileId: CreationOptional<number>;
     declare file: NonAttribute<File>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
+
+    async matchPassword(candidatePassword: string) {
+        return await bcrypt.compare(candidatePassword, this.password);
+    }
 
     generateToken() {
         return crypto.randomBytes(5).toString("hex");
@@ -75,6 +81,16 @@ DownloadLink.init(
             allowNull: false,
             defaultValue: true,
         },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            validate: {
+                len: {
+                    args: [8, 32],
+                    msg: "Password must be at least 8 characters long and shorter than 32 characters",
+                },
+            },
+        },
         fileId: {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: false,
@@ -101,6 +117,20 @@ DownloadLink.init(
             beforeValidate(downloadLink) {
                 if (!downloadLink.token) {
                     downloadLink.token = downloadLink.generateToken();
+                }
+            },
+            async beforeSave(downloadLink, options) {
+                if (
+                    (downloadLink.isNewRecord ||
+                        downloadLink.changed("password")) &&
+                    downloadLink.password
+                ) {
+                    downloadLink.password = await bcrypt.hash(
+                        downloadLink.password,
+                        12,
+                    );
+
+                    options.validate = false;
                 }
             },
         },
