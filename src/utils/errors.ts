@@ -14,4 +14,15 @@ class AppError extends Error {
     }
 }
 
+export class NotFound extends AppError {
+    constructor(name: string | undefined = undefined) {
+        if (name) {
+            super(`${name} not found`, 404);
+        } else {
+            super("Not found", 404);
+        }
+        this.name = "NotFound";
+    }
+}
+
 export default AppError;

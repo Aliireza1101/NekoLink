@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import multer from "multer";
-import AppError from "../utils/errors";
+import AppError, { NotFound } from "../utils/errors";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { DownloadLink, File } from "../db/models";
@@ -54,7 +54,7 @@ export const getFile = async (
         include: [{ model: File, as: "file" }],
     });
     if (!link || !link.isActive) {
-        throw new AppError("Invalid file", 404);
+        throw new NotFound("File");
     }
     res.status(200).json({
         status: "success",
@@ -76,7 +76,7 @@ export const downloadFile = async (
         include: [{ model: File, as: "file" }],
     });
     if (!link || !link.isActive) {
-        throw new AppError("Invalid download link", 404);
+        throw new NotFound("Download Link");
     }
 
     link.downloadCount += 1;

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Plan } from "../db/models";
-import AppError from "../utils/errors";
+import AppError, { NotFound } from "../utils/errors";
 
 export const createPlan = async (req: Request, res: Response) => {
     console.log(req.body);
@@ -20,7 +20,7 @@ export const getPlans = async (req: Request, res: Response) => {
 export const getPlan = async (req: Request<{ id: string }>, res: Response) => {
     const plan = await Plan.findByPk(req.params.id);
     if (!plan) {
-        throw new AppError("Plan does not exist", 404);
+        throw new NotFound("Plan");
     }
     res.status(200).json({ status: "success", plan });
 };

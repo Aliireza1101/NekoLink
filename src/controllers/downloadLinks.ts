@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { DownloadLink, File } from "../db/models";
-import AppError from "../utils/errors";
+import AppError, { NotFound } from "../utils/errors";
 
 const filterObj = (obj: Record<string, string>, fields: string[]) => {
     const result: Record<string, string> = {};
@@ -38,7 +38,7 @@ export const updateDownloadLink = async (
     const link = await DownloadLink.findByPk(req.params.id);
 
     if (!link) {
-        throw new AppError("Download link not found", 404);
+        throw new NotFound("Download Link");
     }
 
     const file = await File.findOne({
@@ -48,7 +48,7 @@ export const updateDownloadLink = async (
         },
     });
     if (!file) {
-        throw new AppError("Download link not found", 404);
+        throw new NotFound("Download Link");
     }
 
     const updateFields = filterObj(req.body, [
