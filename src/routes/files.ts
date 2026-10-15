@@ -5,10 +5,11 @@ import {
     multerUploader,
     downloadFile,
 } from "../controllers/files";
+import { optionalAuth } from "../controllers/auth";
 
 const router = Router();
 
-router.post("/", multerUploader, uploadFile);
+router.post("/", optionalAuth, multerUploader, uploadFile);
 router.get("/:token", getFile);
 router.get("/:token/download", downloadFile);
 

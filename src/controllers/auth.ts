@@ -48,29 +48,51 @@ const verifyToken = async (token: string): Promise<jwt.JwtPayload> => {
     });
 };
 
+const getToken = (req: Request): string | undefined => {
+    return (
+        req.cookies.jwt ||
+        (req.headers.authorization?.startsWith("Bearer ")
+            ? req.headers.authorization?.split(" ")[1]
+            : undefined)
+    );
+};
+
+const authenticate = async (token: string) => {
+    const payload = await verifyToken(token);
+    const user = await User.unscoped().findByPk(Number(payload.id));
+
+    if (!user || user.hasPasswordChanged(payload.iat!)) {
+        throw new AppError("Invalid authentication token", 401);
+    }
+
+    return user;
+};
+
 export const requiredAuth = async (
     req: Request,
     res: Response,
     next: NextFunction,
 ) => {
-    const token =
-        req.cookies.jwt ||
-        (req.headers.authorization?.startsWith("Bearer ")
-            ? req.headers.authorization?.split(" ")[1]
-            : undefined);
-
+    const token = getToken(req);
     if (!token) {
         throw new AppError("Authorization required", 401);
     }
 
-    const payload = await verifyToken(token);
-    const user = await User.unscoped().findByPk(Number(payload.id));
+    req.user = await authenticate(token);
+    next();
+};
 
-    if (!user || user.hasPasswordChanged(payload.iat!)) {
-        throw new AppError("Invalid authorization token", 401);
+export const optionalAuth = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+    const token = getToken(req);
+
+    if (token) {
+        req.user = await authenticate(token);
     }
 
-    req.user = user;
     next();
 };
 

@@ -28,11 +28,13 @@ export const uploadFile = async (req: Request, res: Response) => {
         throw new AppError("Please upload a file", 400);
     }
 
+    const userId = req.user ? req.user.id : undefined;
     const newFile = await File.create({
         originalName: req.file.originalname,
         filename: req.file.filename,
         mimeType: req.file.mimetype,
         size: req.file.size,
+        userId,
     });
 
     const downloadLink = await newFile.createDownloadLink();
