@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { DownloadLink, File } from "../db/models";
 import AppError, { NotFound } from "../utils/errors";
 
@@ -12,29 +12,11 @@ const filterObj = (obj: Record<string, string>, fields: string[]) => {
     return result;
 };
 
-export const updateDownloadLink = async (
+export const onlyOwner = async (
     req: Request<{ id: string }>,
     res: Response,
+    next: NextFunction,
 ) => {
-    console.log(
-        !req.body.isActive &&
-            !req.body.expiresAt &&
-            !req.body.maxDownloads &&
-            !req.body.downloadCount,
-    );
-    console.log(req.body.isActive);
-    if (
-        !req.body ||
-        (!req.body.isActive &&
-            !req.body.expiresAt &&
-            !req.body.maxDownloads &&
-            !req.body.downloadCount)
-    ) {
-        throw new AppError(
-            "Please provide a field to update on download link",
-            400,
-        );
-    }
     const link = await DownloadLink.findByPk(req.params.id);
 
     if (!link) {
@@ -51,6 +33,29 @@ export const updateDownloadLink = async (
         throw new NotFound("Download Link");
     }
 
+    req.link = link;
+    next();
+};
+
+export const updateDownloadLink = async (
+    req: Request<{ id: string }>,
+    res: Response,
+) => {
+    if (
+        !req.body ||
+        (!req.body.isActive === undefined &&
+            !req.body.expiresAt === undefined &&
+            !req.body.maxDownloads === undefined &&
+            !req.body.downloadCount === undefined)
+    ) {
+        throw new AppError(
+            "Please provide a field to update on download link",
+            400,
+        );
+    }
+
+    const link = req.link;
+
     const updateFields = filterObj(req.body, [
         "isActive",
         "expiresAt",
@@ -65,4 +70,12 @@ export const updateDownloadLink = async (
             downloadLink: link,
         },
     });
+};
+
+export const deleteDownloadLink = async (
+    req: Request<{ id: string }>,
+    res: Response,
+) => {
+    await req.link.destroy();
+    res.status(204).json();
 };
