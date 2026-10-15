@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { protect, restrictTo } from "../controllers/auth";
+import { requiredAuth, restrictTo } from "../controllers/auth";
 import {
     deleteDownloadLink,
     updateDownloadLink,
@@ -9,6 +9,6 @@ import {
 const router = Router();
 router
     .route("/:id")
-    .patch(protect, onlyOwner, updateDownloadLink)
-    .delete(protect, onlyOwner, deleteDownloadLink);
+    .patch(requiredAuth, onlyOwner, updateDownloadLink)
+    .delete(requiredAuth, onlyOwner, deleteDownloadLink);
 export default router;

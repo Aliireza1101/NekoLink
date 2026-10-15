@@ -48,7 +48,7 @@ const verifyToken = async (token: string): Promise<jwt.JwtPayload> => {
     });
 };
 
-export const protect = async (
+export const requiredAuth = async (
     req: Request,
     res: Response,
     next: NextFunction,

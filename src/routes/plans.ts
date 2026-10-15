@@ -5,13 +5,13 @@ import {
     createPlan,
     deletePlan,
 } from "../controllers/plans";
-import { protect, restrictTo } from "../controllers/auth";
+import { requiredAuth, restrictTo } from "../controllers/auth";
 
 const router = Router();
-router.route("/").get(getPlans).post(protect, restrictTo("ADMIN"), createPlan);
+router.route("/").get(getPlans).post(requiredAuth, restrictTo("ADMIN"), createPlan);
 router
     .route("/:id")
     .get(getPlan)
-    .delete(protect, restrictTo("ADMIN"), deletePlan);
+    .delete(requiredAuth, restrictTo("ADMIN"), deletePlan);
 
 export default router;
