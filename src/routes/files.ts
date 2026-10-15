@@ -11,6 +11,6 @@ const router = Router();
 
 router.post("/", optionalAuth, multerUploader, uploadFile);
 router.get("/:token", getFile);
-router.get("/:token/download", downloadFile);
+router.route("/:token/download").get(downloadFile).post(downloadFile);
 
 export default router;

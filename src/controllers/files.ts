@@ -44,7 +44,11 @@ export const uploadFile = async (req: Request, res: Response) => {
         expiresAt.setHours(expiresAt.getHours() + 4);
     }
 
-    const downloadLink = await newFile.createDownloadLink({ expiresAt });
+    const downloadLink = await newFile.createDownloadLink({
+        expiresAt,
+        password: req.body.password,
+    });
+
     const link = `${req.protocol}://${req.host}/api/files/${downloadLink.token}`;
 
     res.status(200).json({
@@ -71,6 +75,7 @@ export const getFile = async (
             name: link.file.originalName,
             mimeType: link.file.mimeType,
             size: link.file.size,
+            passwordRequired: Boolean(link.password),
         },
         downloadLink: `${req.protocol}://${req.host}/api/files/${link.token}/download`,
     });
@@ -86,6 +91,16 @@ export const downloadFile = async (
     });
     if (!link || !link.isActive) {
         throw new NotFound("File");
+    }
+
+    if (link.password) {
+        if (!req.body || !req.body.password) {
+            throw new AppError("Password is required", 403);
+        }
+
+        if (!(await link.matchPassword(req.body.password))) {
+            throw new AppError("Incorrect password", 403);
+        }
     }
 
     link.downloadCount += 1;
