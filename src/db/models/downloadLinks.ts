@@ -5,6 +5,7 @@ import {
     CreationOptional,
     DataTypes,
     NonAttribute,
+    Op,
 } from "sequelize";
 import sequelize from "../config/database";
 
@@ -102,6 +103,16 @@ DownloadLink.init(
                     downloadLink.token = downloadLink.generateToken();
                 }
             },
+        },
+        scopes: {
+            notExpired: () => ({
+                where: {
+                    [Op.or]: [
+                        { expiresAt: null },
+                        { expiresAt: { [Op.gt]: new Date() } },
+                    ],
+                },
+            }),
         },
     },
 );

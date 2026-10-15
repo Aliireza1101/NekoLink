@@ -37,7 +37,14 @@ export const uploadFile = async (req: Request, res: Response) => {
         userId,
     });
 
-    const downloadLink = await newFile.createDownloadLink();
+    const expiresAt = new Date();
+    if (req.user) {
+        expiresAt.setDate(expiresAt.getDate() + 1);
+    } else {
+        expiresAt.setHours(expiresAt.getHours() + 4);
+    }
+
+    const downloadLink = await newFile.createDownloadLink({ expiresAt });
     const link = `${req.protocol}://${req.host}/api/files/${downloadLink.token}`;
 
     res.status(200).json({
@@ -51,7 +58,7 @@ export const getFile = async (
     req: Request<{ token: string }>,
     res: Response,
 ) => {
-    const link = await DownloadLink.findOne({
+    const link = await DownloadLink.scope("notExpired").findOne({
         where: { token: req.params.token },
         include: [{ model: File, as: "file" }],
     });
@@ -73,7 +80,7 @@ export const downloadFile = async (
     req: Request<{ token: string }>,
     res: Response,
 ) => {
-    const link = await DownloadLink.findOne({
+    const link = await DownloadLink.scope("notExpired").findOne({
         where: { token: req.params.token },
         include: [{ model: File, as: "file" }],
     });
