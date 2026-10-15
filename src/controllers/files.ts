@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import multer from "multer";
-import AppError from "../utils/appError";
+import AppError from "../utils/errors";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { DownloadLink, File } from "../db/models";

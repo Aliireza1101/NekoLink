@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { Plan, User } from "../db/models";
-import AppError from "../utils/appError";
+import AppError from "../utils/errors";
 
 export const getAllUsers = async (req: Request, res: Response) => {
     const users = await User.findAll({

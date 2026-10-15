@@ -5,7 +5,7 @@ import crypto from "crypto";
 
 import { Op } from "sequelize";
 import { User } from "../db/models";
-import AppError from "../utils/appError";
+import AppError from "../utils/errors";
 import { sendForgotPasswordEmail } from "../emails/email";
 import { Role } from "../db/models/users";
 

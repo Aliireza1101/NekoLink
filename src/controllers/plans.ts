@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Plan } from "../db/models";
-import AppError from "../utils/appError";
+import AppError from "../utils/errors";
 
 export const createPlan = async (req: Request, res: Response) => {
     console.log(req.body);

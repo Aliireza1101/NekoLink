@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { DownloadLink, File } from "../db/models";
-import AppError from "../utils/appError";
+import AppError from "../utils/errors";
 
 const filterObj = (obj: Record<string, string>, fields: string[]) => {
     const result: Record<string, string> = {};
