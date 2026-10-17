@@ -31,6 +31,7 @@ Plan.init(
         title: {
             type: DataTypes.STRING,
             allowNull: false,
+            unique: true,
         },
         maxUploadSize: {
             type: DataTypes.BIGINT,
