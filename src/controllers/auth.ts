@@ -130,8 +130,11 @@ export const login = async (req: Request, res: Response) => {
     if (!req.body.password || !req.body.email) {
         throw new AppError("Email or password is missing", 400);
     }
-    const user = await User.findOne({ where: { email: req.body.email } });
-    if (!user || !user.matchPassword(req.body.password)) {
+    const user = await User.unscoped().findOne({
+        where: { email: req.body.email },
+    });
+
+    if (!user || !(await user.matchPassword(req.body.password))) {
         throw new AppError("Incorrect email or password", 401);
     }
 
