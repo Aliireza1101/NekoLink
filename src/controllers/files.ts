@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import multer from "multer";
 import AppError, { NotFound } from "../utils/errors";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
-import { DownloadLink, File } from "../db/models";
+import { DownloadLink, File, Plan } from "../db/models";
 
 const maxFileSize = Math.floor(Number(process.env.MAX_FILE_SIZE) * 2 ** 30);
 
@@ -16,12 +16,36 @@ const diskStorage = multer.diskStorage({
     },
 });
 
-const upload = multer({
-    limits: { fileSize: maxFileSize },
-    storage: diskStorage,
-});
+export const uploadMiddleware = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+    let plan: Plan | null;
+    if (req.user) {
+        plan = await req.user.getPlan();
+    } else {
+        plan = await Plan.findOne({ where: { title: "free" } });
+    }
 
-export const multerUploader = upload.single("file");
+    if (!plan) {
+        console.error(
+            `User ${req.user ? req.user.id : "anonymous"} does not have a plan`,
+        );
+        throw new AppError(
+            "Service temporarily unavailable. Please try again later",
+            500,
+        );
+    }
+
+    const fileSizeLimit = plan.maxUploadSize;
+    const multerUpload = multer({
+        storage: diskStorage,
+        limits: { fileSize: fileSizeLimit },
+    }).single("file");
+
+    multerUpload(req, res, next);
+};
 
 export const uploadFile = async (req: Request, res: Response) => {
     if (!req.file) {
