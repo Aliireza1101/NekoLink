@@ -1,11 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
-import AppError, { NotFound } from "../utils/errors";
+import AppError, { NotFound , PlanUnavailable} from "../utils/errors";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { DownloadLink, File, Plan } from "../db/models";
-
-const maxFileSize = Math.floor(Number(process.env.MAX_FILE_SIZE) * 2 ** 30);
 
 const diskStorage = multer.diskStorage({
     destination: "uploads/tmp",
@@ -29,13 +27,7 @@ export const uploadMiddleware = async (
     }
 
     if (!plan) {
-        console.error(
-            `User ${req.user ? req.user.id : "anonymous"} does not have a plan`,
-        );
-        throw new AppError(
-            "Service temporarily unavailable. Please try again later",
-            500,
-        );
+        throw new PlanUnavailable(req.user ? req.user.id : "anonymous")
     }
 
     const fileSizeLimit = plan.maxUploadSize;

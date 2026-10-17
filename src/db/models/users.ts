@@ -162,6 +162,12 @@ User.init(
                     options.validate = false; // off because it is has been validated before and it's gonna validate again after this hook
                 }
             },
+            async beforeCreate(user) {
+                const freePlan = await Plan.findOne({
+                    where: { title: "free" },
+                });
+                user.planId = freePlan?.id!;
+            },
         },
         defaultScope: {
             attributes: {

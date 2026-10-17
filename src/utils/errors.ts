@@ -25,4 +25,10 @@ export class NotFound extends AppError {
     }
 }
 
+export class PlanUnavailable extends Error {
+    constructor(public identifier: any) {
+        super(`User ${identifier} does not have a plan`);
+    }
+}
+
 export default AppError;
