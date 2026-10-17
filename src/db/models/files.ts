@@ -18,6 +18,7 @@ class File extends Model<InferAttributes<File>, InferCreationAttributes<File>> {
     declare filename: string;
     declare mimeType: string;
     declare size: number;
+    declare expiresAt: CreationOptional<Date>;
     declare userId: CreationOptional<number>;
     declare downloadLinks: NonAttribute<DownloadLink[]>;
     declare createdAt: CreationOptional<Date>;
@@ -46,6 +47,13 @@ File.init(
             allowNull: false,
         },
         size: { type: DataTypes.BIGINT, allowNull: false },
+        expiresAt: {
+            type: DataTypes.DATE,
+            allowNull: true,
+            validate: {
+                isDate: true,
+            },
+        },
         userId: {
             type: DataTypes.INTEGER.UNSIGNED,
             allowNull: true,
