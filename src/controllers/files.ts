@@ -22,6 +22,7 @@ export const uploadMiddleware = async (
     let plan: Plan | null;
     if (req.user) {
         plan = await req.user.getPlan();
+        req.user.plan = plan;
     } else {
         plan = await Plan.findOne({ where: { title: "free" } });
     }
@@ -29,8 +30,6 @@ export const uploadMiddleware = async (
     if (!plan) {
         throw new PlanUnavailable(req.user ? req.user.id : "anonymous");
     }
-
-    req.user.plan = plan;
 
     const fileSizeLimit = plan.maxUploadSize;
     const multerUpload = multer({
@@ -46,21 +45,35 @@ export const uploadFile = async (req: Request, res: Response) => {
         throw new AppError("Please upload a file", 400);
     }
 
+    let expiresAt: Date | null;
+
+    if (req.body.expiresAt) {
+        expiresAt = new Date(req.body.expiresAt);
+    } else {
+        expiresAt = new Date();
+        if (req.user) {
+            if (req.user.plan.fileRetentionMinutes) {
+                expiresAt.setMinutes(
+                    expiresAt.getMinutes() +
+                        req.user.plan.fileRetentionMinutes!,
+                );
+            } else {
+                expiresAt = null;
+            }
+        } else {
+            expiresAt.setHours(expiresAt.getHours() + 4);
+        }
+    }
+
     const userId = req.user ? req.user.id : undefined;
     const newFile = await File.create({
         originalName: req.file.originalname,
         filename: req.file.filename,
         mimeType: req.file.mimetype,
+        expiresAt: expiresAt || undefined,
         size: req.file.size,
         userId,
     });
-
-    const expiresAt = new Date();
-    if (req.user) {
-        expiresAt.setDate(expiresAt.getDate() + 1);
-    } else {
-        expiresAt.setHours(expiresAt.getHours() + 4);
-    }
 
     const downloadLink = await newFile.createDownloadLink({
         expiresAt,

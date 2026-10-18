@@ -7,6 +7,8 @@ export const createPlan = async (req: Request, res: Response) => {
     const newPlan = await Plan.create({
         title: req.body.title,
         maxUploadSize: req.body.maxUploadSize,
+        storageSize: req.body.storageSize,
+        fileRetentionMinutes: req.body.fileRetentionMinutes,
         price: req.body.price,
     });
     res.status(200).json({ status: "success", plan: newPlan });

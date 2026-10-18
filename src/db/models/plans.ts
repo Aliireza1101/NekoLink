@@ -13,8 +13,8 @@ class Plan extends Model<InferAttributes<Plan>, InferCreationAttributes<Plan>> {
     declare id: CreationOptional<number>;
     declare title: string;
     declare maxUploadSize: number;
-    declare storageSize: number;
-    declare fileRetentionMinutes: CreationOptional<number>;
+    declare storageSize: CreationOptional<number | null>;
+    declare fileRetentionMinutes: CreationOptional<number | null>;
     declare price: number;
     declare users: NonAttribute<User[]>;
     declare createdAt: CreationOptional<Date>;
