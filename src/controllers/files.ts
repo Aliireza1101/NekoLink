@@ -22,7 +22,6 @@ export const uploadMiddleware = async (
     let plan: Plan | null;
     if (req.user) {
         plan = await req.user.getPlan();
-        req.user.plan = plan;
     } else {
         plan = await Plan.findOne({ where: { title: "free" } });
     }
@@ -30,6 +29,9 @@ export const uploadMiddleware = async (
     if (!plan) {
         throw new PlanUnavailable(req.user ? req.user.id : "anonymous");
     }
+
+    req.plan = plan; 
+    // require a plan to upload a file ('free' plan for anonymous users)
 
     const fileSizeLimit = plan.maxUploadSize;
     const multerUpload = multer({
@@ -40,28 +42,55 @@ export const uploadMiddleware = async (
     multerUpload(req, res, next);
 };
 
+const validateExpDate = (
+    expDate: Date,
+    fileRetentionMinutes: number | null,
+) => {
+    // Check all the wrong possibilities and if wrong raise error
+    if (Number.isNaN(expDate.getTime())) {
+        throw new AppError("Invalid expiration date", 400);
+    }
+    if (expDate < new Date()) {
+        throw new Error("Expiration must be in future");
+    }
+
+    if (!fileRetentionMinutes) {
+        return;
+    }
+
+    const fileRetentionLimit = new Date();
+    fileRetentionLimit.setMinutes(
+        fileRetentionLimit.getMinutes() + fileRetentionMinutes,
+    );
+
+    if (fileRetentionLimit < expDate) {
+        throw new AppError(
+            "Expiration time exceeds your account's limits, pick a lower expiration",
+            400,
+        );
+    }
+};
+
 export const uploadFile = async (req: Request, res: Response) => {
     if (!req.file) {
         throw new AppError("Please upload a file", 400);
     }
 
-    let expiresAt: Date | null;
+    let expiresAt: Date | undefined;
 
-    if (req.body.expiresAt) {
+    if (req.body.expiresAt && req.user) {
+        // If user passed custom exp date
         expiresAt = new Date(req.body.expiresAt);
+        validateExpDate(expiresAt, req.plan.fileRetentionMinutes);
     } else {
+        // Setting exp date based on user's plan
         expiresAt = new Date();
-        if (req.user) {
-            if (req.user.plan.fileRetentionMinutes) {
-                expiresAt.setMinutes(
-                    expiresAt.getMinutes() +
-                        req.user.plan.fileRetentionMinutes!,
-                );
-            } else {
-                expiresAt = null;
-            }
+        if (req.plan.fileRetentionMinutes) {
+            expiresAt.setMinutes(
+                expiresAt.getMinutes() + req.plan.fileRetentionMinutes!,
+            );
         } else {
-            expiresAt.setHours(expiresAt.getHours() + 4);
+            expiresAt = undefined;
         }
     }
 
@@ -70,7 +99,7 @@ export const uploadFile = async (req: Request, res: Response) => {
         originalName: req.file.originalname,
         filename: req.file.filename,
         mimeType: req.file.mimetype,
-        expiresAt: expiresAt || undefined,
+        expiresAt,
         size: req.file.size,
         userId,
     });
