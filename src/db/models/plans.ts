@@ -13,6 +13,7 @@ class Plan extends Model<InferAttributes<Plan>, InferCreationAttributes<Plan>> {
     declare id: CreationOptional<number>;
     declare title: string;
     declare maxUploadSize: number;
+    declare storageSize: number;
     declare price: number;
     declare users: NonAttribute<User[]>;
     declare createdAt: CreationOptional<Date>;
@@ -36,6 +37,10 @@ Plan.init(
         maxUploadSize: {
             type: DataTypes.BIGINT,
             allowNull: false,
+        },
+        storageSize: {
+            type: DataTypes.BIGINT,
+            allowNull: true,
         },
         price: {
             type: DataTypes.INTEGER,

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import multer from "multer";
-import AppError, { NotFound , PlanUnavailable} from "../utils/errors";
+import AppError, { NotFound, PlanUnavailable } from "../utils/errors";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { DownloadLink, File, Plan } from "../db/models";
@@ -27,8 +27,10 @@ export const uploadMiddleware = async (
     }
 
     if (!plan) {
-        throw new PlanUnavailable(req.user ? req.user.id : "anonymous")
+        throw new PlanUnavailable(req.user ? req.user.id : "anonymous");
     }
+
+    req.user.plan = plan;
 
     const fileSizeLimit = plan.maxUploadSize;
     const multerUpload = multer({
