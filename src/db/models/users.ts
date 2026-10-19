@@ -99,7 +99,9 @@ User.init(
             type: DataTypes.ENUM(...roles),
             allowNull: false,
             defaultValue: "USER",
-            validate: { isIn: roles as readonly any[] },
+            validate: {
+                isIn: { args: [roles], msg: "Invalid role" },
+            },
         },
         planId: {
             type: DataTypes.INTEGER,

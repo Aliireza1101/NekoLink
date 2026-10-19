@@ -1,8 +1,22 @@
 import { Router } from "express";
 import { requiredAuth, restrictTo } from "../controllers/auth";
-import { deleteMe, getAllUsers, getMe } from "../controllers/users";
+import {
+    deleteMe,
+    deleteUser,
+    editUser,
+    getAllUsers,
+    getMe,
+    getUser,
+    updateMe,
+} from "../controllers/users";
 
 const router = Router();
-router.route("/users").get(requiredAuth, restrictTo("ADMIN"), getAllUsers);
-router.route("/me").get(requiredAuth, getMe).delete(requiredAuth, deleteMe);
+router.use(requiredAuth);
+
+router.route("/me").get(getMe).delete(deleteMe).patch(updateMe);
+
+router.use(restrictTo("ADMIN"));
+router.route("/users").get(getAllUsers);
+router.route("/users/:id").get(getUser).delete(deleteUser).patch(editUser);
+
 export default router;

@@ -85,7 +85,7 @@ Plan.init(
                 plan.title = plan.title.toLowerCase();
             },
         },
-        defaultScope: { attributes: { exclude: ["updatedAt"] } },
+        defaultScope: { attributes: { exclude: ["updatedAt", "createdAt"] } },
     },
 );
 
