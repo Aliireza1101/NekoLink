@@ -82,6 +82,9 @@ File.init(
         timestamps: true,
         underscored: true,
         paranoid: true,
+        defaultScope: {
+            attributes: { exclude: ["deletedAt", "updatedAt", "userId"] },
+        },
     },
 );
 

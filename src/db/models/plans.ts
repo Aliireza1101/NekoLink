@@ -38,17 +38,33 @@ Plan.init(
         maxUploadSize: {
             type: DataTypes.BIGINT,
             allowNull: false,
+            validate: {
+                min: 1,
+                isInt: true,
+            },
         },
         storageSize: {
             type: DataTypes.BIGINT,
             allowNull: true,
+            validate: {
+                min: 1,
+                isInt: true,
+            },
         },
         fileRetentionMinutes: {
             type: DataTypes.INTEGER,
             allowNull: true,
+            validate: {
+                min: 1,
+                isInt: true,
+            },
         },
         price: {
             type: DataTypes.INTEGER,
+            validate: {
+                min: 0,
+                isInt: true,
+            },
         },
         createdAt: {
             type: DataTypes.DATE,
@@ -64,6 +80,12 @@ Plan.init(
         modelName: "plans",
         timestamps: true,
         underscored: true,
+        hooks: {
+            beforeValidate(plan) {
+                plan.title = plan.title.toLowerCase();
+            },
+        },
+        defaultScope: { attributes: { exclude: ["updatedAt"] } },
     },
 );
 

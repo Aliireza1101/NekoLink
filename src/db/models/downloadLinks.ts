@@ -142,8 +142,10 @@ DownloadLink.init(
                         { expiresAt: { [Op.gt]: new Date() } },
                     ],
                 },
+                attributes: { exclude: ["updatedAt", "fileId"] },
             }),
         },
+        defaultScope: { attributes: { exclude: ["updatedAt", "fileId"] } },
     },
 );
 

@@ -177,6 +177,7 @@ User.init(
                     "passwordResetToken",
                     "passwordTokenExpiresAt",
                     "planId",
+                    "updatedAt",
                 ],
             },
         },
