@@ -27,6 +27,21 @@ export const getPlan = async (req: Request<{ id: string }>, res: Response) => {
     res.status(200).json({ status: "success", plan });
 };
 
+export const editPlan = async (req: Request<{ id: string }>, res: Response) => {
+    const plan = await Plan.findByPk(req.params.id);
+    if (!plan) {
+        throw new NotFound("Plan");
+    }
+    await plan.update({
+        title: req.body.title,
+        maxUploadSize: req.body.maxUploadSize,
+        storageSize: req.body.storageSize,
+        fileRetentionMinutes: req.body.fileRetentionMinutes,
+        price: req.body.price,
+    });
+    res.status(200).json({ status: "success", plan });
+};
+
 export const deletePlan = async (
     req: Request<{ id: string }>,
     res: Response,
