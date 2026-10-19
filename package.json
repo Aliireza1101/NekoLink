@@ -25,6 +25,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.3.0",
     "@types/node": "^26.6.3",
+    "@types/node-cron": "^3.0.11",
     "@types/sequelize": "^4.28.20",
     "sequelize-cli": "^6.6.5"
   },
@@ -35,6 +36,7 @@
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.4.0",
+    "node-cron": "^4.6.0",
     "resend": "^6.32.1",
     "sequelize": "^6.37.8",
     "sqlite3": "^6.0.1"

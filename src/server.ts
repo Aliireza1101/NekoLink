@@ -3,6 +3,7 @@ config();
 
 import app from "./app";
 import sequelize from "./db/config/database";
+import "./scheduler";
 
 const main = async () => {
     console.log("Connecting to database");
