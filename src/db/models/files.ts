@@ -23,6 +23,7 @@ class File extends Model<InferAttributes<File>, InferCreationAttributes<File>> {
     declare downloadLinks: NonAttribute<DownloadLink[]>;
     declare createdAt: CreationOptional<Date>;
     declare updatedAt?: CreationOptional<Date>;
+    declare deletedAt: CreationOptional<Date>;
 
     declare user: NonAttribute<User>;
     declare createDownloadLink: HasManyCreateAssociationMixin<DownloadLink>;
@@ -70,12 +71,17 @@ File.init(
             type: DataTypes.DATE,
             allowNull: true,
         },
+        deletedAt: {
+            type: DataTypes.DATE,
+            allowNull: true,
+        },
     },
     {
         sequelize: sequelize,
         modelName: "files",
         timestamps: true,
         underscored: true,
+        paranoid: true,
     },
 );
 
