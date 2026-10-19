@@ -20,8 +20,16 @@ export const uploadMiddleware = async (
     next: NextFunction,
 ) => {
     let plan: Plan | null;
+    let fileSizeLimit: number | undefined = undefined;
+
     if (req.user) {
         plan = await req.user.getPlan();
+        const usedStorage = await File.sum("size", {
+            where: { userId: req.user.id },
+        });
+        fileSizeLimit = plan.storageSize
+            ? Math.min(plan.maxUploadSize, plan.storageSize - usedStorage)
+            : plan.maxUploadSize;
     } else {
         plan = await Plan.findOne({ where: { title: "free" } });
     }
@@ -30,13 +38,12 @@ export const uploadMiddleware = async (
         throw new PlanUnavailable(req.user ? req.user.id : "anonymous");
     }
 
-    req.plan = plan; 
+    req.plan = plan;
     // require a plan to upload a file ('free' plan for anonymous users)
 
-    const fileSizeLimit = plan.maxUploadSize;
     const multerUpload = multer({
         storage: diskStorage,
-        limits: { fileSize: fileSizeLimit },
+        limits: { fileSize: fileSizeLimit || plan.maxUploadSize },
     }).single("file");
 
     multerUpload(req, res, next);
