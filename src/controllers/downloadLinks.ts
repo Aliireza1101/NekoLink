@@ -29,7 +29,8 @@ export const onlyOwner = async (
             userId: req.user.id,
         },
     });
-    if (!file) {
+
+    if (!file && !(req.user.role === "ADMIN")) {
         throw new NotFound("Download Link");
     }
 
