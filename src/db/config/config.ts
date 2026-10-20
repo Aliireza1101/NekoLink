@@ -12,7 +12,16 @@ export = {
         logging: console.log,
     },
     production: {
-        dialect: "sqlite",
-        storage: process.env.DB_HOST,
+        url: process.env.DATABASE_URL,
+        dialect: "postgres",
+        logging: false,
+        dialectOptions:
+            process.env.DB_SSL === "true"
+                ? {
+                      ssl: {
+                          require: true,
+                      },
+                  }
+                : {},
     },
 };

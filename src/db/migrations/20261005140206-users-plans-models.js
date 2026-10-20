@@ -3,7 +3,35 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        queryInterface.createTable("users", {
+        await queryInterface.createTable("plans", {
+            id: {
+                type: Sequelize.INTEGER,
+                primaryKey: true,
+                autoIncrement: true,
+                unique: true,
+                allowNull: false,
+            },
+            title: {
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
+            max_upload_size: {
+                type: Sequelize.BIGINT,
+                allowNull: false,
+            },
+            price: {
+                type: Sequelize.INTEGER,
+            },
+            created_at: {
+                type: Sequelize.DATE,
+                allowNull: false,
+            },
+            updated_at: {
+                type: Sequelize.DATE,
+                allowNull: true,
+            },
+        });
+        await queryInterface.createTable("users", {
             id: {
                 type: Sequelize.INTEGER,
                 primaryKey: true,
@@ -47,34 +75,6 @@ module.exports = {
             password_token_expires_at: {
                 type: Sequelize.DATE,
                 allowNull: true,
-            },
-            created_at: {
-                type: Sequelize.DATE,
-                allowNull: false,
-            },
-            updated_at: {
-                type: Sequelize.DATE,
-                allowNull: true,
-            },
-        });
-        await queryInterface.createTable("plans", {
-            id: {
-                type: Sequelize.INTEGER,
-                primaryKey: true,
-                autoIncrement: true,
-                unique: true,
-                allowNull: false,
-            },
-            title: {
-                type: Sequelize.STRING,
-                allowNull: false,
-            },
-            max_upload_size: {
-                type: Sequelize.BIGINT,
-                allowNull: false,
-            },
-            price: {
-                type: Sequelize.INTEGER,
             },
             created_at: {
                 type: Sequelize.DATE,
