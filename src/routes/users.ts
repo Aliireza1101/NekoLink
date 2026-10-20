@@ -11,11 +11,11 @@ import {
 } from "../controllers/users";
 
 const router = Router();
-router.use(requiredAuth);
+router.use(["/me", "/users"], requiredAuth);
 
 router.route("/me").get(getMe).delete(deleteMe).patch(updateMe);
 
-router.use(restrictTo("ADMIN"));
+router.use("/users", restrictTo("ADMIN"));
 router.route("/users").get(getAllUsers);
 router.route("/users/:id").get(getUser).delete(deleteUser).patch(editUser);
 
