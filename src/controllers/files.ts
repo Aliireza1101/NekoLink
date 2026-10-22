@@ -43,7 +43,7 @@ export const uploadMiddleware = async (
 
     const multerUpload = multer({
         storage: diskStorage,
-        limits: { fileSize: fileSizeLimit || plan.maxUploadSize },
+        limits: { fileSize: Number(fileSizeLimit || plan.maxUploadSize) },
     }).single("file");
 
     multerUpload(req, res, next);
