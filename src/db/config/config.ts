@@ -12,16 +12,15 @@ export = {
         logging: console.log,
     },
     production: {
-        url: process.env.DATABASE_URL,
-        dialect: "postgres",
+        database: process.env.DB,
+        dialect: process.env.DB_DIALECT,
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        username: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        dialectOptions: {
+            ssl: { rejectUnauthorized: false },
+        },
         logging: false,
-        dialectOptions:
-            process.env.DB_SSL === "true"
-                ? {
-                      ssl: {
-                          require: true,
-                      },
-                  }
-                : {},
     },
 };
