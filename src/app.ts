@@ -6,8 +6,11 @@ import authRouter from "./routes/auth";
 import userRouter from "./routes/users";
 import downloadLinkRouter from "./routes/downloadLinks";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 const app = express();
+app.use(cors({ origin: true, credentials: true }));
+
 app.use(express.json());
 app.use(cookieParser());
 
