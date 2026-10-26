@@ -1,0 +1,704 @@
+{
+  "info": {
+    "name": "NekoLink",
+    "description": "",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Me",
+      "item": [
+        {
+          "name": "Update Me",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "enabled": true
+              }
+            ],
+            "url": {
+              "raw": "${[ address ]}api/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "me"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"aliooooo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete me",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "enabled": true
+              }
+            ],
+            "url": {
+              "raw": "${[ address ]}api/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "me"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"pass1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Me",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "${[ address ]}api/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "me"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ],
+      "folderId": null,
+      "id": "fl_jTqV4T5pqC"
+    },
+    {
+      "name": "Download Links",
+      "item": [
+        {
+          "name": "Delete Download Link",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "${[ address ]}api/download-links/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "download-links",
+                "1"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Update Download Link",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "enabled": true
+              }
+            ],
+            "url": {
+              "raw": "${[ address ]}api/download-links/4",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "download-links",
+                "4"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"isActive\": false}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ],
+      "folderId": null,
+      "id": "fl_Jdpk92mq82"
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "${[ address ]}api/users/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "users",
+                "1"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Get User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "${[ address ]}api/users/2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "users",
+                "2"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Edit User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "enabled": true
+              }
+            ],
+            "url": {
+              "raw": "${[ address ]}api/users/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "users",
+                "1"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "2",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"planId\":1}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "${[ address ]}api/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "users"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ],
+      "folderId": null,
+      "id": "fl_YahvbVZuqj"
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "enabled": true
+              }
+            ],
+            "url": {
+              "raw": "${[ address ]}api/auth/reset-password/50c332d751ab36e4a2121155b0060738382a1146283d9f842532b9ee133e282f",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "auth",
+                "reset-password",
+                "50c332d751ab36e4a2121155b0060738382a1146283d9f842532b9ee133e282f"
+              ],
+              "variable": [],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "3e24a4150f4657232ccea6b3d2624b8125c6ab5c620293e8e3f94ccb5a90c12c",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"pass1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "enabled": true
+              }
+            ],
+            "url": {
+              "raw": "${[ address ]}api/auth/forgot-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "auth",
+                "forgot-password"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"aliireza.dev@gmail.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login (JWT)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "enabled": true
+              }
+            ],
+            "url": {
+              "raw": "${[ address ]}api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "auth",
+                "login"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\":\"aliireza.dev@gmail.com\",\n  \"password\": \"pass1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SignUp (JWT)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "enabled": true
+              }
+            ],
+            "url": {
+              "raw": "${[ address ]}api/auth/signup",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "auth",
+                "signup"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Aliireza\",\n  \"email\": \"aliireza.dev@gmail.com\",\n  \"password\": \"pass1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ],
+      "folderId": null,
+      "id": "fl_ew8dohZnqS"
+    },
+    {
+      "name": "Plans",
+      "item": [
+        {
+          "name": "Edit Plan",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "enabled": true
+              }
+            ],
+            "url": {
+              "raw": "${[ address ]}api/plans/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "plans",
+                "1"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fileRetentionMinutes\": 60\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete One Plan",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "${[ address ]}api/plans/6",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "plans",
+                "6"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Get One Plan",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "${[ address ]}api/plans/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "plans",
+                "1"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Create Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "enabled": true
+              }
+            ],
+            "url": {
+              "raw": "${[ address ]}api/plans",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "plans"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"free\",\n  \"maxUploadSize\": 214748364,\n  \"storageSize\":214748364,\n  \"fileRetentionMinutes\": 2,\n  \"price\":0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Plans",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "${[ address ]}api/plans",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "plans"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ],
+      "folderId": null,
+      "id": "fl_yvCn7xhp49"
+    },
+    {
+      "name": "Files",
+      "item": [
+        {
+          "name": "Get File Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "${[ address ]}api/files/d559f23d57",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "files",
+                "d559f23d57"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Download File",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text",
+                "enabled": true
+              }
+            ],
+            "url": {
+              "raw": "${[ address ]}api/files/04fe894f8d/download",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "files",
+                "04fe894f8d",
+                "download"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"password\": \"pass1234\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload File",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data",
+                "type": "text",
+                "enabled": true
+              }
+            ],
+            "url": {
+              "raw": "${[ address ]}api/files",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "${[ address ]}api",
+                "files"
+              ],
+              "variable": [],
+              "query": []
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ],
+      "folderId": null,
+      "id": "fl_TecwhK94Xb"
+    }
+  ],
+  "variable": []
+}
